@@ -1,0 +1,19 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" width="512" height="512">
+  <rect width="512" height="512" rx="112" fill="#f7f6f4"/>
+  <g transform="translate(88, 88)">
+    <defs>
+      <clipPath id="calClip">
+        <rect x="0" y="32" width="336" height="304" rx="48"/>
+      </clipPath>
+    </defs>
+    <g clip-path="url(#calClip)">
+      <polygon points="0,32 336,32 0,336" fill="#9fb19e"/>
+      <polygon points="336,32 336,336 0,336" fill="#cfc0b0"/>
+    </g>
+    <rect x="0" y="32" width="336" height="304" rx="48" fill="none" stroke="#2c3330" stroke-width="20"/>
+    <line x1="96" y1="0" x2="96" y2="64" stroke="#2c3330" stroke-width="22" stroke-linecap="round"/>
+    <line x1="240" y1="0" x2="240" y2="64" stroke="#2c3330" stroke-width="22" stroke-linecap="round"/>
+    <circle cx="116" cy="148" r="24" fill="#ffffff" opacity="0.92"/>
+    <circle cx="220" cy="220" r="24" fill="#ffffff" opacity="0.92"/>
+  </g>
+</svg>

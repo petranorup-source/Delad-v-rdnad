@@ -1,0 +1,6 @@
+{
+  "name": "Delad Vårdnad",
+  "description": "Lugn och tydlig delad kalender för vårdnadshavare med gemensamma barn.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}
