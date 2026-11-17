@@ -16,6 +16,7 @@ import {
   getCustodyClassName,
   getDisplayCustodyForDate,
 } from '../data/mockData';
+import { useFocusTrap } from '../hooks/useFocusTrap';
 
 export default function DayDetailModal({
   dateISO,
@@ -31,6 +32,7 @@ export default function DayDetailModal({
   onOpenEventDetail,
   onUpdateEventStatus,
 }) {
+  const focusTrapRef = useFocusTrap(Boolean(dateISO));
   useEffect(() => {
     if (!dateISO) return undefined;
     const handleKeyDown = (event) => {
@@ -83,6 +85,7 @@ export default function DayDetailModal({
       }}
     >
       <div
+        ref={focusTrapRef}
         className="modal-panel"
         role="dialog"
         aria-modal="true"

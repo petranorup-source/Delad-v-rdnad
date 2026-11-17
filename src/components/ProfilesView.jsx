@@ -24,6 +24,8 @@ export default function ProfilesView({
   );
   const [draftColor, setDraftColor] = useState(getChildColorKey('elsa'));
   const [showMoreColors, setShowMoreColors] = useState(false);
+  const [profileError, setProfileError] = useState('');
+  const [newChildError, setNewChildError] = useState('');
 
   const [isAddingChild, setIsAddingChild] = useState(false);
   const [newChildName, setNewChildName] = useState('');
@@ -35,24 +37,34 @@ export default function ProfilesView({
   const startEdit = (profileId, currentName, currentColorKey) => {
     if (editingId === profileId) {
       setEditingId(null);
+      setProfileError('');
       return;
     }
     setEditingId(profileId);
     setDraftName(currentName);
     setDraftColor(currentColorKey);
+    setProfileError('');
     setShowMoreColors(EXTRA_SWATCH_KEYS.includes(currentColorKey));
   };
 
   const handleSaveGuardian = (guardianId) => {
     const trimmed = draftName.trim();
-    if (!trimmed) return;
+    if (!trimmed) {
+      setProfileError('Namnet kan inte vara tomt.');
+      return;
+    }
+    setProfileError('');
     onUpdateGuardian(guardianId, trimmed, draftColor);
     setEditingId(null);
   };
 
   const handleSaveChild = (childId) => {
     const trimmed = draftName.trim();
-    if (!trimmed) return;
+    if (!trimmed) {
+      setProfileError('Barnets namn kan inte vara tomt.');
+      return;
+    }
+    setProfileError('');
     onUpdateChild(childId, trimmed, draftColor);
     setEditingId(null);
   };
@@ -60,7 +72,11 @@ export default function ProfilesView({
   const handleCreateChild = (event) => {
     event.preventDefault();
     const trimmed = newChildName.trim();
-    if (!trimmed) return;
+    if (!trimmed) {
+      setNewChildError('Ange ett namn för det nya barnet.');
+      return;
+    }
+    setNewChildError('');
     onAddChild(trimmed, newChildColor);
     setNewChildName('');
     setNewChildColor('mint');
@@ -166,6 +182,11 @@ export default function ProfilesView({
                 {isEditing ? (
                   <>
                     {renderColorPicker(draftColor, setDraftColor)}
+                    {profileError ? (
+                      <p className="form-error" role="alert">
+                        {profileError}
+                      </p>
+                    ) : null}
                     <div className="profile-edit-actions">
                       <button
                         type="button"
@@ -233,6 +254,11 @@ export default function ProfilesView({
                 {isEditing ? (
                   <>
                     {renderColorPicker(draftColor, setDraftColor)}
+                    {profileError ? (
+                      <p className="form-error" role="alert">
+                        {profileError}
+                      </p>
+                    ) : null}
                     <div className="profile-edit-actions">
                       {childrenProfiles.length > 1 ? (
                         <button
@@ -272,6 +298,11 @@ export default function ProfilesView({
                 aria-label="Barnets namn"
               />
               {renderColorPicker(newChildColor, setNewChildColor)}
+              {newChildError ? (
+                <p className="form-error" role="alert">
+                  {newChildError}
+                </p>
+              ) : null}
               <div className="profile-edit-actions">
                 <button
                   type="button"

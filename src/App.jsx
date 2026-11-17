@@ -40,16 +40,108 @@ import {
   SettingsView,
 } from './components/SecondaryViews';
 
-export default function App() {
-  /* --- Centralt applikationstillstånd --- */
-  const [activeUser, setActiveUser] = useState('mamma');
-  const [isLoggedOut, setIsLoggedOut] = useState(false);
-  const [custodyPattern, setCustodyPattern] = useState('alternating-weeks');
+function loadPersistedState(key, fallback) {
+  try {
+    const raw = localStorage.getItem(key);
+    if (raw !== null) {
+      return JSON.parse(raw);
+    }
+  } catch (err) {
+    console.warn(`Kunde inte läsa ${key} från localStorage:`, err);
+  }
+  return fallback;
+}
 
-  const [guardians, setGuardians] = useState(INITIAL_GUARDIANS);
-  const [childrenProfiles, setChildrenProfiles] = useState(INITIAL_CHILDREN);
-  const [colorPreferences, setColorPreferences] = useState(INITIAL_COLOR_PREFERENCES);
-  const [events, setEvents] = useState(INITIAL_EVENTS);
+export default function App() {
+  /* --- Centralt applikationstillstånd med localStorage-persistens --- */
+  const [activeUser, setActiveUser] = useState(() =>
+    loadPersistedState('delad_vardnad_active_user', 'mamma')
+  );
+  const [isLoggedOut, setIsLoggedOut] = useState(false);
+  const [custodyPattern, setCustodyPattern] = useState(() =>
+    loadPersistedState('delad_vardnad_custody_pattern', 'alternating-weeks')
+  );
+
+  const [guardians, setGuardians] = useState(() =>
+    loadPersistedState('delad_vardnad_guardians', INITIAL_GUARDIANS)
+  );
+  const [childrenProfiles, setChildrenProfiles] = useState(() =>
+    loadPersistedState('delad_vardnad_children', INITIAL_CHILDREN)
+  );
+  const [colorPreferences, setColorPreferences] = useState(() =>
+    loadPersistedState('delad_vardnad_color_prefs', INITIAL_COLOR_PREFERENCES)
+  );
+  const [events, setEvents] = useState(() =>
+    loadPersistedState('delad_vardnad_events', INITIAL_EVENTS)
+  );
+
+  /* --- Spara tillstånd till localStorage vid ändringar --- */
+  useEffect(() => {
+    try {
+      localStorage.setItem('delad_vardnad_active_user', JSON.stringify(activeUser));
+    } catch (err) {
+      console.warn('Kunde inte spara activeUser:', err);
+    }
+  }, [activeUser]);
+
+  useEffect(() => {
+    try {
+      localStorage.setItem('delad_vardnad_custody_pattern', JSON.stringify(custodyPattern));
+    } catch (err) {
+      console.warn('Kunde inte spara custodyPattern:', err);
+    }
+  }, [custodyPattern]);
+
+  useEffect(() => {
+    try {
+      localStorage.setItem('delad_vardnad_guardians', JSON.stringify(guardians));
+    } catch (err) {
+      console.warn('Kunde inte spara guardians:', err);
+    }
+  }, [guardians]);
+
+  useEffect(() => {
+    try {
+      localStorage.setItem('delad_vardnad_children', JSON.stringify(childrenProfiles));
+    } catch (err) {
+      console.warn('Kunde inte spara childrenProfiles:', err);
+    }
+  }, [childrenProfiles]);
+
+  useEffect(() => {
+    try {
+      localStorage.setItem('delad_vardnad_color_prefs', JSON.stringify(colorPreferences));
+    } catch (err) {
+      console.warn('Kunde inte spara colorPreferences:', err);
+    }
+  }, [colorPreferences]);
+
+  useEffect(() => {
+    try {
+      localStorage.setItem('delad_vardnad_events', JSON.stringify(events));
+    } catch (err) {
+      console.warn('Kunde inte spara events:', err);
+    }
+  }, [events]);
+
+  const handleResetDemoData = () => {
+    try {
+      localStorage.removeItem('delad_vardnad_events');
+      localStorage.removeItem('delad_vardnad_guardians');
+      localStorage.removeItem('delad_vardnad_children');
+      localStorage.removeItem('delad_vardnad_color_prefs');
+      localStorage.removeItem('delad_vardnad_custody_pattern');
+      localStorage.removeItem('delad_vardnad_active_user');
+    } catch (err) {
+      console.warn('Kunde inte rensa localStorage:', err);
+    }
+    setEvents(INITIAL_EVENTS);
+    setGuardians(INITIAL_GUARDIANS);
+    setChildrenProfiles(INITIAL_CHILDREN);
+    setColorPreferences(INITIAL_COLOR_PREFERENCES);
+    setCustodyPattern('alternating-weeks');
+    setActiveUser('mamma');
+  };
 
   /* --- Navigations- och vytillstånd --- */
   const [activePage, setActivePage] = useState('calendar'); // calendar | profiles | notifications | settings | help | search
@@ -384,6 +476,7 @@ export default function App() {
           <SettingsView
             custodyPattern={custodyPattern}
             onChangeCustodyPattern={setCustodyPattern}
+            onResetDemoData={handleResetDemoData}
             onBack={() => setActivePage('calendar')}
           />
         ) : activePage === 'help' ? (
@@ -584,6 +677,13 @@ export default function App() {
                 getChildColorKey={getChildColorKey}
                 onSelectEvent={(eventId) =>
                   setDetailModalState({ eventId, focusComment: false })
+                }
+                onAddActivity={(dateISO) =>
+                  setFormState({
+                    isOpen: true,
+                    initialDateISO: dateISO,
+                    editingEvent: null,
+                  })
                 }
               />
             )}

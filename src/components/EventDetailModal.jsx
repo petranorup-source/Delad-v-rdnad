@@ -14,6 +14,7 @@ import {
   getCustodyClassName,
   getDisplayCustodyForDate,
 } from '../data/mockData';
+import { useFocusTrap } from '../hooks/useFocusTrap';
 
 export default function EventDetailModal({
   eventItem,
@@ -30,10 +31,13 @@ export default function EventDetailModal({
   onUpdateEventStatus,
 }) {
   const [commentDraft, setCommentDraft] = useState('');
+  const [commentError, setCommentError] = useState('');
   const commentInputRef = useRef(null);
+  const focusTrapRef = useFocusTrap(Boolean(eventItem));
 
   useEffect(() => {
     if (!eventItem) return undefined;
+    setCommentError('');
     if (focusCommentOnOpen && commentInputRef.current) {
       commentInputRef.current.focus();
     }
@@ -72,7 +76,11 @@ export default function EventDetailModal({
   const handleSubmitComment = (event) => {
     event.preventDefault();
     const trimmed = commentDraft.trim();
-    if (!trimmed) return;
+    if (!trimmed) {
+      setCommentError('Skriv en kommentar innan du skickar.');
+      return;
+    }
+    setCommentError('');
     onAddComment(eventItem.id, trimmed);
     setCommentDraft('');
   };
@@ -86,6 +94,7 @@ export default function EventDetailModal({
       }}
     >
       <div
+        ref={focusTrapRef}
         className="modal-panel"
         role="dialog"
         aria-modal="true"
@@ -264,6 +273,12 @@ export default function EventDetailModal({
               <p className="profile-note">Inga kommentarer ännu.</p>
             )}
 
+            {commentError ? (
+              <p className="form-error" role="alert" style={{ marginBottom: '8px' }}>
+                {commentError}
+              </p>
+            ) : null}
+
             <form className="comment-composer" onSubmit={handleSubmitComment}>
               <label htmlFor="comment-input" className="sr-only">
                 Skriv en kommentar
@@ -275,7 +290,10 @@ export default function EventDetailModal({
                 className="text-input"
                 placeholder="Kommentera..."
                 value={commentDraft}
-                onChange={(event) => setCommentDraft(event.target.value)}
+                onChange={(event) => {
+                  setCommentDraft(event.target.value);
+                  if (commentError) setCommentError('');
+                }}
               />
               <button type="submit" className="btn-primary-pill">
                 Skicka

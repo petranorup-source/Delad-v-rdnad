@@ -1,6 +1,6 @@
 /* --- Sekundära vyer: Notiser, Inställningar, Hjälp & Logga ut --- */
 import React, { useState } from 'react';
-import { ArrowLeft, Check, Download, MessageSquare, Share } from 'lucide-react';
+import { ArrowLeft, Check, Download, MessageSquare, RotateCcw, Share } from 'lucide-react';
 import { formatSwedishDayTitle } from '../data/mockData';
 import { usePWAInstall } from '../hooks/usePWAInstall';
 
@@ -88,9 +88,16 @@ export function NotificationsView({
   );
 }
 
-export function SettingsView({ custodyPattern, onChangeCustodyPattern, onBack }) {
+export function SettingsView({
+  custodyPattern,
+  onChangeCustodyPattern,
+  onResetDemoData,
+  onBack,
+}) {
   const { isInstallable, isInstalled, isIOS, install } = usePWAInstall();
   const [showIOSGuide, setShowIOSGuide] = useState(false);
+  const [showResetConfirm, setShowResetConfirm] = useState(false);
+  const [resetDone, setResetDone] = useState(false);
 
   return (
     <main className="subview-container" aria-label="Inställningar">
@@ -184,6 +191,58 @@ export function SettingsView({ custodyPattern, onChangeCustodyPattern, onBack })
           )}
         </section>
       ) : null}
+      {/* --- Demodata & Återställning --- */}
+      <section className="simple-card" aria-label="Återställ demodata">
+        <h2 className="profile-section-title">Demodata & Återställning</h2>
+        <p className="profile-note">
+          Dina ändringar, aktiviteter och färgval sparas automatiskt i din webbläsare. Vill du börja om från början?
+        </p>
+        {showResetConfirm ? (
+          <div className="delete-confirm-box" role="alert">
+            <p className="delete-confirm-text">
+              Är du säker? Alla sparade aktiviteter, ändrade namn och inställningar återställs till ursprungliga demodata.
+            </p>
+            <div className="delete-confirm-actions">
+              <button
+                type="button"
+                className="btn-outline-pill"
+                onClick={() => setShowResetConfirm(false)}
+              >
+                Avbryt
+              </button>
+              <button
+                type="button"
+                className="btn-danger-solid"
+                onClick={() => {
+                  if (onResetDemoData) onResetDemoData();
+                  setShowResetConfirm(false);
+                  setResetDone(true);
+                  setTimeout(() => setResetDone(false), 3500);
+                }}
+              >
+                Återställ data
+              </button>
+            </div>
+          </div>
+        ) : (
+          <div>
+            <button
+              type="button"
+              className="btn-danger-outline"
+              onClick={() => setShowResetConfirm(true)}
+            >
+              <RotateCcw size={16} aria-hidden="true" />
+              <span>Återställ till ursprunglig demodata</span>
+            </button>
+            {resetDone ? (
+              <p className="status-inline is-approved" style={{ marginTop: '10px' }}>
+                <Check size={16} aria-hidden="true" />
+                <span>Demodata har återställts!</span>
+              </p>
+            ) : null}
+          </div>
+        )}
+      </section>
     </main>
   );
 }

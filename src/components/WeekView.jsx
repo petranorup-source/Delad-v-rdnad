@@ -1,5 +1,6 @@
 /* --- Veckovy (Kolumner Mån till Fre, följer månadsvyns struktur) --- */
 import React from 'react';
+import { Plus } from 'lucide-react';
 import {
   getCustodyClassName,
   getDisplayCustodyForDate,
@@ -114,6 +115,17 @@ export default function WeekView({
                         <span className="week-col-event-title">{evt.title}</span>
                       </button>
                     ))}
+                    {dayEvents.length === 0 ? (
+                      <button
+                        type="button"
+                        className="week-col-empty-card"
+                        onClick={() => onSelectDate(day.dateISO)}
+                        aria-label={`Inga aktiviteter ${day.weekdayLong} ${day.dayNumber}. Tryck för att visa eller lägga till.`}
+                      >
+                        <Plus size={13} aria-hidden="true" />
+                        <span>Lägg till</span>
+                      </button>
+                    ) : null}
                   </div>
 
                   <button

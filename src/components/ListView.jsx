@@ -6,6 +6,7 @@ import {
   HelpCircle,
   Home,
   MapPin,
+  Plus,
   RotateCcw,
   XCircle,
 } from 'lucide-react';
@@ -25,6 +26,7 @@ export default function ListView({
   selectedChildFilter,
   getChildColorKey,
   onSelectEvent,
+  onAddActivity,
 }) {
   const monthPrefix = `${year}-${String(monthIndex + 1).padStart(2, '0')}`;
 
@@ -69,8 +71,22 @@ export default function ListView({
 
   if (dates.length === 0) {
     return (
-      <section className="simple-card" aria-label="Listvy">
+      <section className="simple-card empty-list-card" aria-label="Listvy">
         <p className="empty-day-text">Inga sparade aktiviteter för vald månad och filter.</p>
+        {onAddActivity ? (
+          <div style={{ marginTop: '14px', display: 'flex', justifyContent: 'center' }}>
+            <button
+              type="button"
+              className="secondary-pill-btn"
+              onClick={() =>
+                onAddActivity(`${year}-${String(monthIndex + 1).padStart(2, '0')}-01`)
+              }
+            >
+              <Plus size={18} aria-hidden="true" />
+              <span>Lägg till aktivitet</span>
+            </button>
+          </div>
+        ) : null}
       </section>
     );
   }

@@ -59,6 +59,17 @@ export default function SearchView({
         {matches.length === 0 ? (
           <div className="simple-card">
             <p className="empty-day-text">Inga aktiviteter matchade din sökning.</p>
+            {query.trim() ? (
+              <div style={{ marginTop: '12px', display: 'flex', justifyContent: 'center' }}>
+                <button
+                  type="button"
+                  className="secondary-pill-btn"
+                  onClick={() => setQuery('')}
+                >
+                  Rensa sökning
+                </button>
+              </div>
+            ) : null}
           </div>
         ) : (
           matches.map((evt) => (

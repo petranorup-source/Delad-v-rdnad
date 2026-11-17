@@ -9,6 +9,7 @@ import {
   isScheduleBreakingHandover,
   toDateISO,
 } from '../data/mockData';
+import { useFocusTrap } from '../hooks/useFocusTrap';
 
 export default function EventForm({
   isOpen,
@@ -42,6 +43,7 @@ export default function EventForm({
   const [errorMessage, setErrorMessage] = useState('');
   const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
   const returnDateInputRef = useRef(null);
+  const focusTrapRef = useFocusTrap(isOpen);
 
   useEffect(() => {
     if (!isOpen) return;
@@ -203,6 +205,7 @@ export default function EventForm({
       }}
     >
       <div
+        ref={focusTrapRef}
         className="modal-panel"
         role="dialog"
         aria-modal="true"
@@ -240,6 +243,8 @@ export default function EventForm({
               className="text-input"
               placeholder="Lägg till titel"
               value={title}
+              aria-invalid={Boolean(errorMessage && !title.trim())}
+              aria-describedby={errorMessage ? 'event-form-error' : undefined}
               onChange={(event) => {
                 setTitle(event.target.value);
                 if (errorMessage) setErrorMessage('');
@@ -248,8 +253,8 @@ export default function EventForm({
           </div>
 
           {/* --- Gäller för --- */}
-          <div className="form-field">
-            <span className="form-label">Gäller för:</span>
+          <fieldset className="form-field form-fieldset">
+            <legend className="form-label">Gäller för:</legend>
             <div className="child-filter-bar">
               <button
                 type="button"
@@ -275,7 +280,7 @@ export default function EventForm({
                 </button>
               ))}
             </div>
-          </div>
+          </fieldset>
 
           {/* --- Bytesdag / Överlämning + Avvikande schema --- */}
           <div>
@@ -391,8 +396,8 @@ export default function EventForm({
           </div>
 
           {/* --- Kategori (valfritt) --- */}
-          <div className="form-field">
-            <span className="form-label">Kategori (valfritt)</span>
+          <fieldset className="form-field form-fieldset">
+            <legend className="form-label">Kategori (valfritt)</legend>
             <div className="category-chips">
               {EVENT_CATEGORIES.map((cat) => (
                 <button
@@ -405,7 +410,7 @@ export default function EventForm({
                 </button>
               ))}
             </div>
-          </div>
+          </fieldset>
 
           {/* --- Kvittering (Anmäld / Godkänd) --- */}
           <div className="form-field">
@@ -470,9 +475,12 @@ export default function EventForm({
                   type="date"
                   className="text-input has-left-icon tabular-nums"
                   value={date}
+                  aria-invalid={Boolean(errorMessage && !date)}
+                  aria-describedby={errorMessage ? 'event-form-error' : undefined}
                   onChange={(event) => {
                     const nextDate = event.target.value;
                     setDate(nextDate);
+                    if (errorMessage) setErrorMessage('');
                     if (!returnDate || returnDate < nextDate) {
                       setReturnDate(nextDate);
                     }
@@ -593,7 +601,11 @@ export default function EventForm({
             </div>
           </div>
 
-          {errorMessage ? <p className="form-error">{errorMessage}</p> : null}
+          {errorMessage ? (
+            <p id="event-form-error" className="form-error" role="alert" aria-live="polite">
+              {errorMessage}
+            </p>
+          ) : null}
 
           {/* --- Borttagning vid redigering (med enkel bekräftelse) --- */}
           {editingEvent ? (

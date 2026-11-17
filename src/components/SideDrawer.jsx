@@ -1,6 +1,7 @@
 /* --- Sidomeny (Drawer) --- */
 import React, { useEffect } from 'react';
 import { Bell, HelpCircle, LogOut, Settings, Users, X } from 'lucide-react';
+import { useFocusTrap } from '../hooks/useFocusTrap';
 
 export default function SideDrawer({
   isOpen,
@@ -10,6 +11,7 @@ export default function SideDrawer({
   onNavigate,
   onLogout,
 }) {
+  const focusTrapRef = useFocusTrap(isOpen);
   useEffect(() => {
     if (!isOpen) return undefined;
     const handleKeyDown = (event) => {
@@ -39,6 +41,7 @@ export default function SideDrawer({
       }}
     >
       <aside
+        ref={focusTrapRef}
         className="side-drawer"
         role="dialog"
         aria-modal="true"
