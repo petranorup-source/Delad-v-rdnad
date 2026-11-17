@@ -43,6 +43,10 @@ Projektet är byggt med React och Vite och körs lokalt utan backend eller API-n
 | `vite.config.ts` | Konfiguration för Vite och `vite-plugin-pwa` (manifest och service worker) |
 | `package.json` | Projektets beroenden (`react`, `lucide-react`, `vite`, `vite-plugin-pwa`) |
 
----
+
+## Teknik & Licens
+
+Grundstrukturen genererades i Google AI Studio, licensierad under **Apache-2.0** och vidareutvecklades sedan i Cursor med Antigravity CLI 1.5.10
+
 
 Byggd utifrån en UX- och frontend-brief med fokus på tydliga användarflöden, tillgänglighet och ren, variabelstyrd CSS.
